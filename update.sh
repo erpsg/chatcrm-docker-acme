@@ -41,6 +41,11 @@ BACKEND_PUBLIC_VOL=$(docker volume list -q | grep -e "^${CURBASE}_backend_public
 BACKEND_PRIVATE_VOL=$(docker volume list -q | grep -e "^${CURBASE}_backend_private$")
 POSTGRES_VOL=$(docker volume list -q | grep -e "^${CURBASE}_postgres_data")
 
+[ -f credentials.env ] && . credentials.env
+
+[ -n "${DOCKER_REGISTRY}" ] && [ -n "${DOCKER_USER}" ] && [ -n "${DOCKER_PASSWORD}" ] && \
+echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REGISTRY} --username ${DOCKER_USER} --password-stdin
+
 if [ -d chatcrm-docker-acme ] && [ -f chatcrm-docker-acme/docker-compose.yaml ] ; then
   cd chatcrm-docker-acme
 elif [ -f docker-compose.yaml ] ; then

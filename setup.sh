@@ -81,6 +81,11 @@ CURFOLDER=${PWD}
 # Passo 2: Instala o docker / apenas se já não tiver instalado
 which docker > /dev/null || curl -sSL https://get.docker.com | sh
 
+[ -f credentials.env ] && . credentials.env
+
+[ -n "${DOCKER_REGISTRY}" ] && [ -n "${DOCKER_USER}" ] && [ -n "${DOCKER_PASSWORD}" ] && \
+echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REGISTRY} --username ${DOCKER_USER} --password-stdin
+
 # Passo 3: Baixa o projeto e entra na pasta
 [ -d chatcrm-docker-acme ] || git clone https://github.com/erpsg/chatcrm-docker-acme.git
 cd chatcrm-docker-acme
