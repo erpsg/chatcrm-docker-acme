@@ -2,8 +2,8 @@
 
 # Função para mostrar a mensagem de uso
 show_usage() {
-    echo -e     "Uso: \n\n      curl -sSL https://get.ticke.tz | sudo bash -s [-b <branchname>] <frontend_host> <email>\n\n"
-    echo -e "Exemplo: \n\n      curl -sSL https://get.ticke.tz | sudo bash -s ticketz.exemplo.com.br email@exemplo.com.br\n\n"
+    echo -e     "Uso: \n\n      curl -sSL https://getcrm.erpcon.com.br | sudo bash -s [-b <branchname>] <frontend_host> <email>\n\n"
+    echo -e "Exemplo: \n\n      curl -sSL https://getcrm.erpcon.com.br | sudo bash -s chatcrm.exemplo.com.br email@exemplo.com.br\n\n"
 }
 
 # Função para mensagem em vermelho
@@ -71,39 +71,8 @@ fi
 
 echo ""
 echoblue "                                               "
-echoblue "  Ticketz - Site oficial https://ticke.tz      "
+echoblue "  chatcrm-erpcon - auto instalador             "
 echoblue "                                               "
-echoblue "  Contato Whatsapp: +55 49 99981 2291          "
-echoblue "                    https://wa.me/554999812291 "
-echoblue "                                               "
-
-if [ "$BRANCH" = "" ] ; then
-   echo ""
-   echored "                                               "
-   echored "  Você está instalando o Ticketz Opensource    "
-   echored "                                               "
-   echored "  O Ticketz Opensource é um sistema de código  "
-   echored "  aberto, disponível gratuitamente a partir    "
-   echored "  da página do projeto: https://ticke.tz       "
-   echored "                                               "
-   echored "  O Ticketz Opensource não pode ser vendido!   "
-   echored "                                               "
-   echored "  Se alguém te cobrou algo por este sistema    "
-   echored "  é recomendado que solicite reembolso por     "
-   echored "  se tratar de uma cobrança indevida.          "
-   echored "                                               "
-   echored "  Por ser um sistema opensource você pode      "
-   echored "  prosseguir com a instalação mesmo assim e    "
-   echored "  conhecer o sistema.                          "
-   echored "                                               "
-   echored "  Aperte CTRL-C para cancelar                  "
-   echored "                                               "
-   echored "  A instalação irá prosseguir em 30 segundos   "
-   echored "                                               "
-   echo ""
-   sleep 30
-   echo "Prosseguindo..."
-fi
 
 # salva pasta atual
 CURFOLDER=${PWD}
@@ -113,8 +82,8 @@ CURFOLDER=${PWD}
 which docker > /dev/null || curl -sSL https://get.docker.com | sh
 
 # Passo 3: Baixa o projeto e entra na pasta
-[ -d ticketz-docker-acme ] || git clone https://github.com/ticketz-oss/ticketz-docker-acme.git
-cd ticketz-docker-acme
+[ -d chatcrm-docker-acme ] || git clone https://github.com/erpsg/chatcrm-docker-acme.git
+cd chatcrm-docker-acme
 if ! git diff-index --quiet HEAD -- ; then
   echo "Salvando alterações locais com git stash push"
   git stash push &> /dev/null
@@ -157,8 +126,6 @@ cat example.env-frontend \
 
 cat >> .env-frontend << EOF
 
-SETUP_SYSTEM=get.ticke.tz
-
 EOF
 
 ## inclui configuração para o acme-companion se o backend tiver host a parte
@@ -193,14 +160,14 @@ if [ -f ${CURFOLDER}/retrieved_data.tar.gz ]; then
    if [ -f ${CURFOLDER}/public_data.tar.gz ]; then
       echo "Encontrado arquivo com dados para a pasta public, iniciando processo de restauração..."
       
-      docker volume create --name ticketz-docker-acme_backend_public &> ${tmplog}-createpublic.log
+      docker volume create --name chatcrm-docker-acme_backend_public &> ${tmplog}-createpublic.log
       
       if [ $? -gt 0 ]; then
          echo -e "\n\nErro ao criar volume public\n\nLog de erros pode ser encontrado em ${tmplog}-createpublic.log\n\n"
          exit 1
       fi
       
-      cat ${CURFOLDER}/public_data.tar.gz | docker run -i --rm -v ticketz-docker-acme_backend_public:/public alpine ash -c "tar -xzf - -C /public" &> ${tmplog}-restorepublic.log
+      cat ${CURFOLDER}/public_data.tar.gz | docker run -i --rm -v chatcrm-docker-acme_backend_public:/public alpine ash -c "tar -xzf - -C /public" &> ${tmplog}-restorepublic.log
 
       if [ $? -gt 0 ]; then
          echo -e "\n\nErro ao restaurar volume public\n\nLog de erros pode ser encontrado em ${tmplog}-restorepublic.log\n\n"
@@ -249,7 +216,7 @@ cat << EOF
 A geração dos certificados e a inicialização do serviço pode levar
 alguns minutos.
 
-Após isso você pode acessar o Ticketz pela URL
+Após isso você pode acessar o Chat CRM pela URL
 
         https://${frontend_host}
         
